@@ -25,9 +25,12 @@ def phi(X, M):
         design.append(row)
     return design
 
-def y_hat(phi_M,t):
+def y_hat(phi_M, t, phi_in=None):
     W_ML = np.dot(np.dot(np.linalg.inv(np.dot(np.transpose(phi_M), phi_M)), np.transpose(phi_M)), t)
-    y = np.dot(phi_M, W_ML)
+    if phi_in is not None:
+        y = np.dot(phi_in, W_ML)
+    else:
+        y = np.dot(phi_M, W_ML)
     return y
 
 def y_hat_reg(phi_M, t, M , l=0.1):
@@ -66,6 +69,13 @@ def plot_MSE(MSE_list):
     plt.title('Mean Square Error')
     plt.show()
 
+def kfold(data_x, data_t):
+    train_x = [data_x[10:50], np.concatenate([data_x[0:10], data_x[20:50]]), np.concatenate([data_x[0:20], data_x[30:50]]), np.concatenate([data_x[0:30], data_x[40:50]]), data_x[0:40]]
+    val_x = [data_x[0:10], data_x[10:20], data_x[20:30], data_x[30:40], data_x[40:50]]
+    train_t = [data_t[10:50], np.concatenate([data_t[0:10], data_t[20:50]]), np.concatenate([data_t[0:20], data_t[30:50]]), np.concatenate([data_t[0:30], data_t[40:50]]), data_t[0:40]]
+    val_t = [data_t[0:10], data_t[10:20], data_t[20:30], data_t[30:40], data_t[40:50]]
+    return train_x, val_x, train_t, val_t
+
 def main():
 
     #read data and split
@@ -87,6 +97,27 @@ def main():
     #     y = y_hat(phi(x_train, M), t_train)
     #     MSE_list.append(MSE(t_train, y))
     # plot_MSE(MSE_list)
+
+    #part3
+    # train_x, val_x, train_t, val_t = kfold(x_train, t_train)
+    # MSE_min = 1000
+    # bestM = 0
+    # for M in range(1,41):
+    #     CV_error = 0
+    #     for i in range(5):
+    #         y = y_hat(phi(train_x[i], M), train_t[i])
+    #         CV_error += (MSE(train_t[i], y))
+    #     CV_error = CV_error/5
+    #     print(M, ":", CV_error)
+    #     if CV_error < MSE_min:
+    #         bestM = M
+    #         MSE_min = CV_error
+
+    # y = y_hat(phi(x_train, bestM), t_train, phi(x_test, bestM))
+    # print(MSE(t_test, y))
+    # y = y_hat(phi(x_train, bestM), t_train)
+    # plot_curve(x_train, t_train, y, bestM)
+
 
     #part4-1
     # for M in M_list:
