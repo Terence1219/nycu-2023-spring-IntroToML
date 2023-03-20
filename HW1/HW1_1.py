@@ -65,12 +65,11 @@ def MSE_reg(t, y, W, l=0.1):
 def plot_MSE(MSE_list):
     plt.figure(figsize=(10,6))
     plt.plot(np.arange(1,31),MSE_list)
-    plt.xticks(np.arange(1,31))
-    plt.yticks(np.arange(0,401,50))
     plt.xlabel('M')
     plt.ylabel('MSE')
     plt.title('Mean Square Error')
     plt.show()
+    
 
 def kfold(data_x, data_t):
     train_x = [data_x[10:50], np.concatenate([data_x[0:10], data_x[20:50]]), np.concatenate([data_x[0:20], data_x[30:50]]), np.concatenate([data_x[0:30], data_x[40:50]]), data_x[0:40]]
@@ -88,18 +87,24 @@ def main():
     M_list = [1, 3, 5, 10, 20, 30]
 
     #part1
-    for M in M_list:
-        y = y_hat(phi(x_train, M), t_train, phi(np.linspace(0, 3, 50),M))
-        plot_curve(x_train, t_train, y, M)
+    # for M in M_list:
+    #     y = y_hat(phi(x_train, M), t_train, phi(np.linspace(0, 3, 50),M))
+    #     plot_curve(x_train, t_train, y, M)
     
     #print(np.shape(phi(x_train,3)))
 
     #part2
-    # MSE_list = []
-    # for M in range(1,31):
-    #     y = y_hat(phi(x_train, M), t_train)
-    #     MSE_list.append(MSE(t_train, y))
-    # plot_MSE(MSE_list)
+    MSE_list = []
+    for M in range(1,31):
+        y = y_hat(phi(x_train, M), t_train)
+        MSE_list.append(MSE(t_train, y))
+    plot_MSE(MSE_list)
+    MSE_test = []
+    for M in range(1,31):
+        y = y_hat(phi(x_train, M), t_train, phi(x_test, M))
+        MSE_test.append(MSE(t_test, y))
+    plot_MSE(MSE_test)
+    
 
     #part3
     # train_x, val_x, train_t, val_t = kfold(x_train, t_train)
@@ -123,16 +128,21 @@ def main():
 
 
     #part4-1
-    for M in M_list:
-        y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(np.linspace(0, 3, 50),M))
-        plot_curve(x_train, t_train, y, M)
+    # for M in M_list:
+    #     y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(np.linspace(0, 3, 50),M))
+    #     plot_curve(x_train, t_train, y, M)
 
     #part4-2
-    # MSE_list = []
-    # for M in range(1,31):
-    #     y, W = y_hat_reg(phi(x_train, M), t_train, M)
-    #     MSE_list.append(MSE_reg(t_train, y, W))
-    # plot_MSE(MSE_list)
+    MSE_list = []
+    for M in range(1,31):
+        y, W = y_hat_reg(phi(x_train, M), t_train, M)
+        MSE_list.append(MSE_reg(t_train, y, W))
+    plot_MSE(MSE_list)
+    MSE_test = []
+    for M in range(1,31):
+        y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(x_test, M))
+        MSE_test.append(MSE_reg(t_test, y, W))
+    plot_MSE(MSE_test)
 
 if __name__ == '__main__':
     main()
