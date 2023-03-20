@@ -33,14 +33,17 @@ def y_hat(phi_M, t, phi_in=None):
         y = np.dot(phi_M, W_ML)
     return y
 
-def y_hat_reg(phi_M, t, M , l=0.1):
+def y_hat_reg(phi_M, t, M, phi_in=None, l=0.1):
     W_ML = np.dot(np.dot(np.linalg.inv(l*np.identity(M) + np.dot(np.transpose(phi_M), phi_M)), np.transpose(phi_M)), t)
-    y = np.dot(phi_M, W_ML)
+    if phi_in is not None:
+        y = np.dot(phi_in, W_ML)
+    else:
+        y = np.dot(phi_M, W_ML)
     return y, W_ML
 
 def plot_curve(x, t, y, M):
-    plt.scatter(x,t)
-    plt.plot(x,y)
+    plt.scatter(x, t)
+    plt.plot(np.linspace(0, 3, 50), y)
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title("M = " + str(M))
@@ -85,9 +88,9 @@ def main():
     M_list = [1, 3, 5, 10, 20, 30]
 
     #part1
-    # for M in M_list:
-    #     y = y_hat(phi(x_train, M), t_train)
-    #     plot_curve(x_train, t_train, y, M)
+    for M in M_list:
+        y = y_hat(phi(x_train, M), t_train, phi(np.linspace(0, 3, 50),M))
+        plot_curve(x_train, t_train, y, M)
     
     #print(np.shape(phi(x_train,3)))
 
@@ -120,9 +123,9 @@ def main():
 
 
     #part4-1
-    # for M in M_list:
-    #     y = y_hat_reg(phi(x_train, M), t_train, M)
-    #     plot_curve(x_train, t_train, y, M)
+    for M in M_list:
+        y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(np.linspace(0, 3, 50),M))
+        plot_curve(x_train, t_train, y, M)
 
     #part4-2
     # MSE_list = []
