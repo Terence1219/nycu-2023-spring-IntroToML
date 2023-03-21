@@ -35,19 +35,18 @@ def phi(X, M=10):
 
 
 def SN(phi_x):
-    SNinv = (10^-6)*np.identity(10) + np.dot(np.transpose(phi_x), phi_x)
+    SNinv = (10**(-6))*np.identity(10) + np.dot(np.transpose(phi_x), phi_x)
     return np.linalg.inv(SNinv)
 
 def mN(S, phi_x, t):
     return np.dot(S, np.dot(np.transpose(phi_x),t))
 
 def plot_curve(x, t, y, N, std):
+    plt.plot(np.linspace(0, 3, 50), y, color='red')
+    plt.fill_between(np.linspace(0, 3, 50), y+std, y-std, color='pink', alpha=0.5)
     plt.scatter(x, t)
-    plt.plot(np.linspace(0, 3, 50), y)
-    plt.plot(np.linspace(0, 3, 50), y+std)
-    plt.plot(np.linspace(0, 3, 50), y-std)
     plt.xlabel('X')
-    plt.ylabel('Y')
+    plt.ylabel('Y') 
     plt.title("N = " + str(N))
     plt.show()
 
@@ -57,7 +56,7 @@ def var(phi_x, S):
 def std_dev(v):
     result = []
     for i in range(len(v)):
-        result.append(np.sqrt(np.absolute(v[i][i])))
+        result.append(np.sqrt((v[i][i])))
     return result
 
 def main():
