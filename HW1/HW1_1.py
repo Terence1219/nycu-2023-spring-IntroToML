@@ -62,12 +62,12 @@ def MSE_reg(t, y, W, l=0.1):
     return data_term + reg_term
 
 
-def plot_MSE(MSE_list):
+def plot_MSE(MSE_list, dataset):
     plt.figure(figsize=(10,6))
     plt.plot(np.arange(1,31),MSE_list)
     plt.xlabel('M')
     plt.ylabel('MSE')
-    plt.title('Mean Square Error')
+    plt.title('Mean Square Error on ' + dataset)
     plt.show()
     
 
@@ -91,30 +91,29 @@ def main():
     #     y = y_hat(phi(x_train, M), t_train, phi(np.linspace(0, 3, 50),M))
     #     plot_curve(x_train, t_train, y, M)
     
-    #print(np.shape(phi(x_train,3)))
 
     #part2
-    MSE_list = []
-    for M in range(1,31):
-        y = y_hat(phi(x_train, M), t_train)
-        MSE_list.append(MSE(t_train, y))
-    plot_MSE(MSE_list)
-    MSE_test = []
-    for M in range(1,31):
-        y = y_hat(phi(x_train, M), t_train, phi(x_test, M))
-        MSE_test.append(MSE(t_test, y))
-    plot_MSE(MSE_test)
+    # MSE_train = []
+    # for M in range(1,31):
+    #     y = y_hat(phi(x_train, M), t_train)
+    #     MSE_train.append(MSE(t_train, y))
+    # plot_MSE(MSE_train, "Training Set")
+    # MSE_test = []
+    # for M in range(1,31):
+    #     y = y_hat(phi(x_train, M), t_train, phi(x_test, M))
+    #     MSE_test.append(MSE(t_test, y))
+    # plot_MSE(MSE_test, "Testing Set")
     
 
     #part3
     # train_x, val_x, train_t, val_t = kfold(x_train, t_train)
     # MSE_min = 1000
     # bestM = 0
-    # for M in range(1,41):
+    # for M in range(1,21):
     #     CV_error = 0
     #     for i in range(5):
-    #         y = y_hat(phi(train_x[i], M), train_t[i])
-    #         CV_error += (MSE(train_t[i], y))
+    #         y = y_hat(phi(train_x[i], M), train_t[i], phi(val_x[i], M))
+    #         CV_error += (MSE(val_t[i], y))
     #     CV_error = CV_error/5
     #     print(M, ":", CV_error)
     #     if CV_error < MSE_min:
@@ -123,7 +122,7 @@ def main():
 
     # y = y_hat(phi(x_train, bestM), t_train, phi(x_test, bestM))
     # print(MSE(t_test, y))
-    # y = y_hat(phi(x_train, bestM), t_train)
+    # y = y_hat(phi(x_train, bestM), t_train, phi(np.linspace(0, 3, 50), bestM))
     # plot_curve(x_train, t_train, y, bestM)
 
 
@@ -133,16 +132,16 @@ def main():
     #     plot_curve(x_train, t_train, y, M)
 
     #part4-2
-    MSE_list = []
+    MSE_train = []
     for M in range(1,31):
         y, W = y_hat_reg(phi(x_train, M), t_train, M)
-        MSE_list.append(MSE_reg(t_train, y, W))
-    plot_MSE(MSE_list)
+        MSE_train.append(MSE_reg(t_train, y, W))
+    plot_MSE(MSE_train, "Training Set")
     MSE_test = []
     for M in range(1,31):
         y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(x_test, M))
         MSE_test.append(MSE_reg(t_test, y, W))
-    plot_MSE(MSE_test)
+    plot_MSE(MSE_test, "Testing Set")
 
 if __name__ == '__main__':
     main()
