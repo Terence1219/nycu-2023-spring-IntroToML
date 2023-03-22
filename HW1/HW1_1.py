@@ -79,7 +79,6 @@ def kfold(data_x, data_t):
     return train_x, val_x, train_t, val_t
 
 def main():
-
     #read data and split
     x, t = read_csv('HW1.csv')
     x_train, t_train = np.array(x[:50]), np.array(t[:50])
