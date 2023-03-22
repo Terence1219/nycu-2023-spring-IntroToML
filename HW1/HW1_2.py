@@ -24,15 +24,6 @@ def phi(X, M=10):
             row.append(sigmoid((xi-mu)/0.1))
         design.append(row)
     return design
-# def phi(X, M=10):
-#     design = []
-#     for xi in X:
-#         row = [1]
-#         for j in range(1,M):
-#             row.append(xi**j)
-#         design.append(row)
-#     return design
-
 
 def SN(phi_x):
     SNinv = (10**(-6))*np.identity(10) + np.dot(np.transpose(phi_x), phi_x)
@@ -47,17 +38,15 @@ def plot_curve(x, t, y, N, std):
     plt.scatter(x, t)
     plt.xlabel('X')
     plt.ylabel('Y') 
+    plt.ylim((-10,20))
     plt.title("N = " + str(N))
     plt.show()
 
-def var(phi_x, S):
-    return 1 + np.dot(np.dot(phi_x, S), np.transpose(phi_x))
-
-def std_dev(v):
-    result = []
-    for i in range(len(v)):
-        result.append(np.sqrt((v[i][i])))
-    return result
+def std_dev(phi_x, S):
+    v = []
+    for phi_v in phi_x:
+        v.append(1 + np.dot(np.dot(np.transpose(phi_v), S), phi_v))
+    return np.sqrt(v)
 
 def main():
 
@@ -69,8 +58,7 @@ def main():
         x_in, t_in = x_train[:N], t_train[:N]
         S = SN(phi(x_in))
         post_mean = mN(S, phi(x_in), t_in)
-        v = var(phi(np.linspace(0, 3, 50)), S)
-        std = std_dev(v)
+        std = std_dev(phi(np.linspace(0, 3, 50)), S)
         y = np.dot(phi(np.linspace(0, 3, 50)), post_mean)
         plot_curve(x_in, t_in, y, N, std)
         

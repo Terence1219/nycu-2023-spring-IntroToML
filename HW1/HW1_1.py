@@ -86,49 +86,49 @@ def main():
     M_list = [1, 3, 5, 10, 20, 30]
 
     #part1
-    # for M in M_list:
-    #     y = y_hat(phi(x_train, M), t_train, phi(np.linspace(0, 3, 50),M))
-    #     plot_curve(x_train, t_train, y, M)
+    for M in M_list:
+        y = y_hat(phi(x_train, M), t_train, phi(np.linspace(0, 3, 50),M))
+        plot_curve(x_train, t_train, y, M)
     
 
-    # #part2
-    # MSE_train = []
-    # for M in range(1,31):
-    #     y = y_hat(phi(x_train, M), t_train)
-    #     MSE_train.append(MSE(t_train, y))
-    # plot_MSE(MSE_train, "Training Set")
-    # MSE_test = []
-    # for M in range(1,31):
-    #     y = y_hat(phi(x_train, M), t_train, phi(x_test, M))
-    #     MSE_test.append(MSE(t_test, y))
-    # plot_MSE(MSE_test, "Testing Set")
+    #part2
+    MSE_train = []
+    for M in range(1,31):
+        y = y_hat(phi(x_train, M), t_train)
+        MSE_train.append(MSE(t_train, y))
+    plot_MSE(MSE_train, "Training Set")
+    MSE_test = []
+    for M in range(1,31):
+        y = y_hat(phi(x_train, M), t_train, phi(x_test, M))
+        MSE_test.append(MSE(t_test, y))
+    plot_MSE(MSE_test, "Testing Set")
     
 
-    # #part3
-    # train_x, val_x, train_t, val_t = kfold(x_train, t_train)
-    # MSE_min = 1000
-    # bestM = 0
-    # for M in range(1,21):
-    #     CV_error = 0
-    #     for i in range(5):
-    #         y = y_hat(phi(train_x[i], M), train_t[i], phi(val_x[i], M))
-    #         CV_error += (MSE(val_t[i], y))
-    #     CV_error = CV_error/5
-    #     #print(M, ":", CV_error)
-    #     if CV_error < MSE_min:
-    #         bestM = M
-    #         MSE_min = CV_error
+    #part3
+    train_x, val_x, train_t, val_t = kfold(x_train, t_train)
+    MSE_min = 1000
+    bestM = 0
+    for M in range(1,21):
+        CV_error = 0
+        for i in range(5):
+            y = y_hat(phi(train_x[i], M), train_t[i], phi(val_x[i], M))
+            CV_error += (MSE(val_t[i], y))
+        CV_error = CV_error/5
+        #print(M, ":", CV_error)
+        if CV_error < MSE_min:
+            bestM = M
+            MSE_min = CV_error
 
-    # y = y_hat(phi(x_train, bestM), t_train, phi(x_test, bestM))
-    # print(MSE(t_test, y))
-    # y = y_hat(phi(x_train, bestM), t_train, phi(np.linspace(0, 3, 50), bestM))
-    # plot_curve(x_train, t_train, y, bestM)
+    y = y_hat(phi(x_train, bestM), t_train, phi(x_test, bestM))
+    print(MSE(t_test, y))
+    y = y_hat(phi(x_train, bestM), t_train, phi(np.linspace(0, 3, 50), bestM))
+    plot_curve(x_train, t_train, y, bestM)
 
 
-    # #part4-1
-    # for M in M_list:
-    #     y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(np.linspace(0, 3, 50),M))
-    #     plot_curve(x_train, t_train, y, M)
+    #part4-1
+    for M in M_list:
+        y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(np.linspace(0, 3, 50),M))
+        plot_curve(x_train, t_train, y, M)
 
     #part4-2
     MSE_train = []
