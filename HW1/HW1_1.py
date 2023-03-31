@@ -1,6 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 def read_csv(filename):
     with open(filename, 'r') as file:
@@ -79,18 +80,19 @@ def kfold(data_x, data_t):
     return train_x, val_x, train_t, val_t
 
 def main():
-
     #read data and split
     x, t = read_csv('HW1.csv')
     x_train, t_train = np.array(x[:50]), np.array(t[:50])
     x_test, t_test = np.array(x[50:]), np.array(t[50:])
     M_list = [1, 3, 5, 10, 20, 30]
+    df = pd.DataFrame(np.arange(0,3.1,0.1))
 
     #part1
     for M in M_list:
         y = y_hat(phi(x_train, M), t_train, phi(np.linspace(0, 3, 50),M))
         plot_curve(x_train, t_train, y, M)
-    
+        df['1-'+str(M)] = y_hat(phi(x_train, M), t_train, phi(np.arange(0,3.1,0.1),M))
+
 
     #part2
     MSE_train = []
@@ -121,15 +123,16 @@ def main():
             MSE_min = CV_error
 
     y = y_hat(phi(x_train, bestM), t_train, phi(x_test, bestM))
-    print(MSE(t_test, y))
+    print('Mean square error of best order M on the Testing Set:', MSE(t_test, y))
     y = y_hat(phi(x_train, bestM), t_train, phi(np.linspace(0, 3, 50), bestM))
     plot_curve(x_train, t_train, y, bestM)
-
+    df['M*'] = y_hat(phi(x_train, bestM), t_train, phi(np.arange(0,3.1,0.1), bestM))
 
     #part4-1
-    for M in M_list:
+    for M in M_list:    
         y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(np.linspace(0, 3, 50),M))
         plot_curve(x_train, t_train, y, M)
+        df['4-'+str(M)], W = y_hat_reg(phi(x_train, M), t_train, M, phi(np.arange(0,3.1,0.1), M))
 
     #part4-2
     MSE_train = []
@@ -142,6 +145,8 @@ def main():
         y, W = y_hat_reg(phi(x_train, M), t_train, M, phi(x_test, M))
         MSE_test.append(MSE_reg(t_test, y, W))
     plot_MSE(MSE_test, "Testing Set")
+
+    df.to_excel('output.xlsx', index=False, header=False)
 
 if __name__ == '__main__':
     main()
