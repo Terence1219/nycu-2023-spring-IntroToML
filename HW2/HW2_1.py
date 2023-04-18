@@ -59,18 +59,18 @@ def gen_plot(result):
     plt.title('Generative model decision boundaries')
     plt.show()
 
-def dis_model(data):
-    phi = basis_v(data)
-    weight = np.array([[0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01]])
+def dis_model(data): #4 classes(K) 4 basis(M)
+    phi = basis_v(data) #4*400*4 K*data*M
+    weight = np.array([[0.001, 0.01, 0.01, 0.01], [0.01, 0.001, 0.01, 0.01], [0.01, 0.01, 0.001, 0.01], [0.01, 0.01, 0.01, 0.001]]) #4*4 K*M
     for i in range(5):
-        a_v = gen_a(weight, phi)
-        
-        y_v = softmax(a_v)
-        print(y_v[0][0])
-        
-    #     weight -= gradient(y_v, phi) * 10
-    #     print(weight)
-    # dis_predict(weight, m, c)
+        a_v = gen_a(weight, phi) #4*400*4 K*data*K
+        y_v = softmax(a_v) #4*400 K*data
+        gradient(y_v, phi)
+        dis_predict(weight, data)
+        weight -= gradient(y_v, phi) * 1
+        #print(weight-gradient(y_v, phi))
+        print(weight)
+    
 
 def basis_v(data):
     result = [[],[],[],[]]
@@ -82,10 +82,15 @@ def basis_v(data):
 def basis(x, y, data):
     xy = [x,y]
     result = []
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[0][0]),np.mean(data[0][1])], cov=np.cov(data[0])))
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[1][0]),np.mean(data[1][1])], cov=np.cov(data[1])))
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[2][0]),np.mean(data[2][1])], cov=np.cov(data[2])))
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[3][0]),np.mean(data[3][1])], cov=np.cov(data[3])))
+    # result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[0][0]),np.mean(data[0][1])], cov=np.cov(data[0])))
+    # result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[1][0]),np.mean(data[1][1])], cov=np.cov(data[1])))
+    # result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[2][0]),np.mean(data[2][1])], cov=np.cov(data[2])))
+    # result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[3][0]),np.mean(data[3][1])], cov=np.cov(data[3])))
+    result.append(multivariate_normal.pdf(xy, mean=[0,100], cov=np.cov(data[0])))
+    result.append(multivariate_normal.pdf(xy, mean=[100,100], cov=np.cov(data[0])))
+    result.append(multivariate_normal.pdf(xy, mean=[0,0], cov=np.cov(data[0])))
+    result.append(multivariate_normal.pdf(xy, mean=[100,0], cov=np.cov(data[0])))
+    np.array(result)
     return result
 
 def gen_a(weight, phi):
@@ -111,19 +116,18 @@ def softmax(a_v):
 def gradient(y_v, phi):
     result = []
     for i in range(len(y_v)):
-        result.append(np.dot(y_v[i]-1, np.transpose(phi[i])))
+        result.append(np.transpose(np.dot(y_v[i]-1, phi[i]))) #M
+        # print(result[i])
+        # print('')
     result = np.array(result)
-    return result
+    return result #K*M
     
-def dis_predict(weight, m, c):
+def dis_predict(weight, data):
     result = [[[], []], [[], []], [[], []], [[], []]]
     for x1 in range(101):
         for x2 in range(101):
-            phi = multivariate_normal.pdf([x1 ,x2], mean=m, cov=c)
-            a_v = []
-            for w in weight:
-                a = w*phi
-                a_v.append(a)
+            phi = basis(x1, x2, data)
+            a_v = np.dot(np.transpose(weight), phi)
             #print(weight)
             i = np.argmax(a_v)
             result[i][0].append(x1)
