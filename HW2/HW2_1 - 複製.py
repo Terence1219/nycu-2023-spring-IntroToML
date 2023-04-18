@@ -60,39 +60,31 @@ def gen_plot(result):
     plt.show()
 
 def dis_model(data):
-    phi = basis_v(data)
-    weight = np.array([[0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01]])
-    for i in range(5):
+    phi, m, c = basis(data)
+    weight = np.array([0.001, 0.01, 0.01, 0.1])
+    for i in range(100):
         a_v = gen_a(weight, phi)
-        
         y_v = softmax(a_v)
-        print(y_v[0][0])
         
-    #     weight -= gradient(y_v, phi) * 10
-    #     print(weight)
-    # dis_predict(weight, m, c)
+        weight -= gradient(y_v, phi) * 10
+        print(weight)
+    dis_predict(weight, m, c)
 
-def basis_v(data):
+def basis(data):
     result = [[],[],[],[]]
+    m = [np.mean(data[0][0]),np.mean(data[0][1])]
+    c = np.cov(data[0])
     for i in range(len(data)):
         for j in range(len(data[i][0])):
-            result[i].append(basis(data[i][0][j], data[i][1][j], data))
-    return result
-
-def basis(x, y, data):
-    xy = [x,y]
-    result = []
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[0][0]),np.mean(data[0][1])], cov=np.cov(data[0])))
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[1][0]),np.mean(data[1][1])], cov=np.cov(data[1])))
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[2][0]),np.mean(data[2][1])], cov=np.cov(data[2])))
-    result.append(multivariate_normal.pdf(xy, mean=[np.mean(data[3][0]),np.mean(data[3][1])], cov=np.cov(data[3])))
-    return result
+            #result[i].append(multivariate_normal.pdf([data[i][0][j] ,data[i][1][j]], mean=[np.mean(data[i][0]),np.mean(data[i][1])], cov=np.cov(data[i])))
+            result[i].append(multivariate_normal.pdf([data[i][0][j] ,data[i][1][j]], mean=m, cov=c))
+    return result, m, c
 
 def gen_a(weight, phi):
     result = [[],[],[],[]]
     for i in range(len(phi)):
         for d in phi[i]:
-            result[i].append(np.dot(np.transpose(weight), d))
+            result[i].append(weight*d)
         result[i] = np.array(result[i])
     return result
 
@@ -108,13 +100,6 @@ def softmax(a_v):
         result[i] = np.array(result[i])
     return result
 
-def gradient(y_v, phi):
-    result = []
-    for i in range(len(y_v)):
-        result.append(np.dot(y_v[i]-1, np.transpose(phi[i])))
-    result = np.array(result)
-    return result
-    
 def dis_predict(weight, m, c):
     result = [[[], []], [[], []], [[], []], [[], []]]
     for x1 in range(101):
@@ -130,7 +115,12 @@ def dis_predict(weight, m, c):
             result[i][1].append(x2)
     gen_plot(result)
 
-
+def gradient(y_v, phi):
+    result = []
+    for i in range(len(y_v)):
+        result.append(np.dot(y_v[i]-1, np.transpose(phi[i])))
+    result = np.array(result)
+    return result
 
 def main():
     data = read_xlsx('HW2.xlsx')
