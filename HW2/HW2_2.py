@@ -40,7 +40,6 @@ def mean_and_p(data):
         p.append(len(d[0]))
         total += len(d[0])
     p = np.array(p)/total
-    print(p)
     return result, p
 
 def gen_predict(weight):
@@ -67,17 +66,14 @@ def gen_plot(result):
 def dis_model(data): #3 classes(K) 4 basis(M)
     phi = basis_v(data) #3*400*4 K*data*M
     weight = np.array([[0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01]]) #3*4 K*M
-    for i in range(5):
+    for i in range(2):
         a_v = gen_a(weight, phi) #4*400*4 K*data*K
         y_v = softmax(a_v) #4*400 K*data
         gradient(y_v, phi)
         dis_predict(weight, data)
         print(weight)
         weight -= gradient(y_v, phi) * 0.001
-        #print(weight-gradient(y_v, phi))
         
-    
-
 def basis_v(data):
     result = [[],[],[]]
     for i in range(len(data)):
@@ -88,10 +84,10 @@ def basis_v(data):
 def basis(x, y, data):
     xy = [x,y]
     result = []
-    result.append(multivariate_normal.pdf(xy, mean=[0,100], cov=np.cov(data[1])))
-    result.append(multivariate_normal.pdf(xy, mean=[100,100], cov=np.cov(data[1])))
-    result.append(multivariate_normal.pdf(xy, mean=[0,0], cov=np.cov(data[1])))
-    result.append(multivariate_normal.pdf(xy, mean=[100,0], cov=np.cov(data[1])))
+    result.append(multivariate_normal.pdf(xy, mean=[0,100], cov=np.cov(data[0])))
+    result.append(multivariate_normal.pdf(xy, mean=[100,100], cov=np.cov(data[0])))
+    result.append(multivariate_normal.pdf(xy, mean=[0,0], cov=np.cov(data[0])))
+    result.append(multivariate_normal.pdf(xy, mean=[100,0], cov=np.cov(data[0])))
     np.array(result)
     return result
 
@@ -108,9 +104,6 @@ def softmax(a_v):
     for i in range(len(a_v)):
         for a in a_v[i]:
             denominator = np.sum(np.exp(a))
-            # ans = []
-            # for ak in a:
-            #     ans.append(np.exp(ak)/denominator)
             result[i].append(np.exp(a[i])/denominator)
         result[i] = np.array(result[i])
     return result
@@ -119,8 +112,6 @@ def gradient(y_v, phi):
     result = []
     for i in range(len(y_v)):
         result.append(np.transpose(np.dot(y_v[i]-1, phi[i]))) #M
-        # print(result[i])
-        # print('')
     result = np.array(result)
     return result #K*M
     
@@ -130,17 +121,16 @@ def dis_predict(weight, data):
         for x2 in range(101):
             phi = basis(x1, x2, data)
             a_v = np.dot(weight, phi)
-            #print(weight)
             i = np.argmax(a_v)
             result[i][0].append(x1)
             result[i][1].append(x2)
     gen_plot(result)
-    plt.title('discriminative model decision boundaries')
+    plt.title('Discriminative model decision boundaries')
     plt.show()
 
 def main():
     data = read_xlsx('HW2.xlsx')
-    #gen_model(data)
+    gen_model(data)
     dis_model(data)
     
 
