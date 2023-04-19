@@ -56,14 +56,13 @@ def gen_predict(weight):
             result[i][0].append(x1)
             result[i][1].append(x2)
     gen_plot(result)
+    plt.title('Generative model decision boundaries')
+    plt.show()
 
 def gen_plot(result):
     plt.scatter(result[0][0], result[0][1], c='b')
     plt.scatter(result[1][0], result[1][1], c='g')
-    plt.scatter(result[2][0], result[2][1], c='r')
-    #plt.scatter(result[3][0], result[3][1], c='k')
-    plt.title('Generative model decision boundaries')
-    plt.show()
+    plt.scatter(result[2][0], result[2][1], c='r')  
 
 def dis_model(data): #3 classes(K) 4 basis(M)
     phi = basis_v(data) #3*400*4 K*data*M
@@ -73,9 +72,10 @@ def dis_model(data): #3 classes(K) 4 basis(M)
         y_v = softmax(a_v) #4*400 K*data
         gradient(y_v, phi)
         dis_predict(weight, data)
+        print(weight)
         weight -= gradient(y_v, phi) * 0.001
         #print(weight-gradient(y_v, phi))
-        print(weight)
+        
     
 
 def basis_v(data):
@@ -88,10 +88,10 @@ def basis_v(data):
 def basis(x, y, data):
     xy = [x,y]
     result = []
-    result.append(multivariate_normal.pdf(xy, mean=[0,100], cov=np.cov(data[0])))
-    result.append(multivariate_normal.pdf(xy, mean=[100,100], cov=np.cov(data[0])))
-    result.append(multivariate_normal.pdf(xy, mean=[0,0], cov=np.cov(data[0])))
-    result.append(multivariate_normal.pdf(xy, mean=[100,0], cov=np.cov(data[0])))
+    result.append(multivariate_normal.pdf(xy, mean=[0,100], cov=np.cov(data[1])))
+    result.append(multivariate_normal.pdf(xy, mean=[100,100], cov=np.cov(data[1])))
+    result.append(multivariate_normal.pdf(xy, mean=[0,0], cov=np.cov(data[1])))
+    result.append(multivariate_normal.pdf(xy, mean=[100,0], cov=np.cov(data[1])))
     np.array(result)
     return result
 
@@ -135,11 +135,13 @@ def dis_predict(weight, data):
             result[i][0].append(x1)
             result[i][1].append(x2)
     gen_plot(result)
+    plt.title('discriminative model decision boundaries')
+    plt.show()
 
 def main():
     data = read_xlsx('HW2.xlsx')
-    gen_model(data)
-    #dis_model(data)
+    #gen_model(data)
+    dis_model(data)
     
 
 if __name__ == '__main__':
