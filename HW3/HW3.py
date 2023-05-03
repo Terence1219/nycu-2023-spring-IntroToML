@@ -46,27 +46,39 @@ def NUSVM(NUvalue, k, train_data, train_label, test_data, test_label):
 def main():
     train_data, train_label, test_data, test_label = read_data()
 
-    print('C-SVM')
-    CSVM(0.1, 'rbf', train_data, train_label, test_data, test_label)
-    CSVM(10, 'rbf', train_data, train_label, test_data, test_label)
-    CSVM(1, 'rbf', train_data, train_label, test_data, test_label)
-    CSVM(1, 'linear', train_data, train_label, test_data, test_label)
-    CSVM(1, 'poly', train_data, train_label, test_data, test_label)
-    CSVM(1, 'sigmoid', train_data, train_label, test_data, test_label)
+    # print('C-SVM')
+    # CSVM(0.1, 'rbf', train_data, train_label, test_data, test_label)
+    # CSVM(10, 'rbf', train_data, train_label, test_data, test_label)
+    # CSVM(1, 'rbf', train_data, train_label, test_data, test_label)
+    # CSVM(1, 'linear', train_data, train_label, test_data, test_label)
+    # CSVM(1, 'poly', train_data, train_label, test_data, test_label)
+    # CSVM(1, 'sigmoid', train_data, train_label, test_data, test_label)
 
-    print('\nν-SVM')
-    NUSVM(0.1, 'rbf', train_data, train_label, test_data, test_label)
-    NUSVM(0.9, 'rbf', train_data, train_label, test_data, test_label)
-    NUSVM(0.5, 'rbf', train_data, train_label, test_data, test_label)
-    NUSVM(0.5, 'linear', train_data, train_label, test_data, test_label)
-    NUSVM(0.5, 'poly', train_data, train_label, test_data, test_label)
-    NUSVM(0.5, 'sigmoid', train_data, train_label, test_data, test_label)
+    # print('\nν-SVM')
+    # NUSVM(0.1, 'rbf', train_data, train_label, test_data, test_label)
+    # NUSVM(0.9, 'rbf', train_data, train_label, test_data, test_label)
+    # NUSVM(0.5, 'rbf', train_data, train_label, test_data, test_label)
+    # NUSVM(0.5, 'linear', train_data, train_label, test_data, test_label)
+    # NUSVM(0.5, 'poly', train_data, train_label, test_data, test_label)
+    # NUSVM(0.5, 'sigmoid', train_data, train_label, test_data, test_label)
 
     clf = svm.SVC()
     clf.fit(train_data, train_label)
     np.set_printoptions(threshold=np.inf, linewidth=np.inf)
     print('\nNumber of support vectors for each class: ', clf.n_support_)
     #print(clf.support_)
+
+    clf = svm.NuSVC()
+    clf.fit(train_data, train_label)
+    print('\nSupport vectors shape for nu=0.5: ', clf.support_vectors_.shape)
+
+    clf = svm.NuSVC(nu=0.1)
+    clf.fit(train_data, train_label)
+    print('\nSupport vectors shape for nu=0.1: ', clf.support_vectors_.shape)
+
+    clf = svm.NuSVC(nu=0.9)
+    clf.fit(train_data, train_label)
+    print('\nSupport vectors shape for nu=0.9: ', clf.support_vectors_.shape)
 
 if __name__ == '__main__':
     main()
