@@ -106,13 +106,13 @@ if __name__ == '__main__':
     imshow(torchvision.utils.make_grid(images))
     '''
     
-    model_name = 'Resnet'
+    model_name = 'simpleCNN'
     if model_name == 'Resnet':
         net = ResNet().to(device)
     else:
         net = simpleCNN().to(device)
 
-    load_path = '.\\resnet18_pretrained_dropout\\animals_ResNet.pth'
+    load_path = '.\\simpleCNN\\animals_simpleCNN.pth'
     net.load_state_dict(torch.load(load_path))
     
     correct_pred = {classname: 0 for classname in classes}

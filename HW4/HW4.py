@@ -21,15 +21,15 @@ class ResNet(nn.Module):
         self.fc3 = nn.Linear(128, 32)
         self.fc4 = nn.Linear(32, 10)
         self.resnet18.fc = self.fc
-        self.dropout = nn.Dropout(0.3)
+        #self.dropout = nn.Dropout(0.3)
 
     def forward(self, x):
         x = self.resnet18(x)
-        x = self.dropout(x)
+        #x = self.dropout(x)
         x = F.relu(self.fc2(x))
-        x = self.dropout(x)
+        #x = self.dropout(x)
         x = F.relu(self.fc3(x))
-        x = self.dropout(x)
+        #x = self.dropout(x)
         x = self.fc4(x)
         return x
 
@@ -97,17 +97,6 @@ if __name__ == '__main__':
     
     classes = ['butterfly','cat', 'chicken', 'cow', 'dog', 'elephant', 'horse', 'sheep', 'spider', 'squirrel']
 
-    ''' 
-    # get some random training images
-    dataiter = iter(testloader)
-    for images, labels in dataiter:
-        imshow(images)
-    # show images
-    
-    # print labels
-    print(' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
-    imshow(torchvision.utils.make_grid(images))
-    '''
     #model_name = 'simpleCNN'
     model_name = 'Resnet'
     if model_name == 'Resnet':
@@ -174,17 +163,7 @@ if __name__ == '__main__':
                 tqdm.write('Model saved.')
                 torch.save(net.state_dict(), save_path)
                 best_acc = acc
-    
-    dataiter = iter(testloader)
-    images, labels = next(dataiter)
-
-    print('Ground Truth: ',' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
-    imshow(torchvision.utils.make_grid(images[0:4]))
-
-    outputs = net(images.to(device))
-    _, predicted = torch.max(outputs.data, 1)
-    print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'for j in range(4)))
-    
+     
     x = np.arange(1,epochs+1)
     plt.figure()
     plt.plot(x,train_acc,label='train')
